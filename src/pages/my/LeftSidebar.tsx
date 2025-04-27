@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 
 export default function LeftSidebar() {
   const tabs = [
-    { path: 'mypage', label: '개인 정보 관리' },
+    { path: 'profile', label: '개인 정보 관리' },
     { path: 'unified', label: '독서 현황 통합' },
     { path: 'finished', label: '다 읽은 책' },
     { path: 'reading', label: '읽고 있는 책' },

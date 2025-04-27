@@ -15,7 +15,7 @@ export default function My() {
       <LeftSidebar />
       <div style={{ flex: 1, padding: '40px' }}>
         <Routes>
-          <Route path="mypage" element={<Mypage />} />
+          <Route path="profile" element={<Mypage />} />
           <Route path="unified" element={<Unified />} />
           <Route path="finished" element={<FinishedBook />} />
           <Route path="reading" element={<ReadingBook />} />
