@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      navigate('/');
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/v1/signin', {
+      const response = await fetch('/api/v1/auth/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,7 +29,10 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log('로그인 성공:', data);
-        // TODO: accessToken 저장하고 redirect
+        
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        navigate('/');
       } else {
         const error = await response.json();
         alert(error.message || '로그인 실패');
@@ -62,18 +74,19 @@ export default function Login() {
 
 const styles = {
   container: {
-    paddingTop: '100px',
+    paddingTop: '150px',
     display: 'flex',
     justifyContent: 'center',
+    marginBottom: '100px',
   },
   form: {
-    width: '300px',
+    width: '400px',
     padding: '24px',
     border: '1px solid black',
     textAlign: 'center' as const,
   },
   input: {
-    width: '100%',
+    width: '90%',
     padding: '12px',
     marginBottom: '12px',
     border: '1px solid black',

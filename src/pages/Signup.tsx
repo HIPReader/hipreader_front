@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -32,7 +34,7 @@ export default function Signup() {
     };
 
     try {
-      const res = await fetch('/api/v1/signup', {
+      const res = await fetch('/api/v1/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(signupData),
@@ -40,7 +42,7 @@ export default function Signup() {
 
       if (res.ok) {
         alert('회원가입 성공!');
-        // TODO: 로그인 페이지로 이동
+        navigate('/login');
       } else {
         const err = await res.json();
         alert(err.message || '회원가입 실패');
@@ -80,18 +82,18 @@ export default function Signup() {
 
 const styles = {
   container: {
-    paddingTop: '100px',
+    paddingTop: '150px',
     display: 'flex',
     justifyContent: 'center',
   },
   form: {
-    width: '300px',
+    width: '400px',
     padding: '24px',
     border: '1px solid black',
     textAlign: 'center' as const,
   },
   input: {
-    width: '100%',
+    width: '90%',
     padding: '12px',
     marginBottom: '12px',
     fontSize: '16px',

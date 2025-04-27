@@ -3,10 +3,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const navigate = useNavigate();
+
+  const handleAccountClick = () => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      navigate('/mypage');
+    } else {
+      navigate('/login');
+    }
+  }
 
   return (
     <header style={styles.header}>
@@ -44,9 +55,9 @@ export default function Header() {
           style={styles.iconClickable}
           onClick={() => setSearchOpen((prev) => !prev)}
         />
-        <Link to="/login">
-          <AccountCircleIcon fontSize="medium" style={styles.iconClickable} />
-        </Link>
+
+        <AccountCircleIcon fontSize="medium" style={styles.iconClickable} onClick={handleAccountClick} />
+
       </div>
     </header>
   );
