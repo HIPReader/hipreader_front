@@ -1,8 +1,13 @@
-import React from 'react';
+import Container from 'react-bootstrap/Container';
+import YearlyBestBook from "../components/YearlyBestBook";
+import BooksToRead from "../components/BooksToRead"
+import ReadingBooks from "../components/ReadingBooks"
+import BooksWishlist from "../components/BooksWishlist";
+import BookRecommendation from "../components/BookRecommendation";
 
 export default function Home() {
   return (
-    <div>
+    <Container>
       {/* 배경 이미지 섹션 */}
       <div style={styles.wallpaper}>
         <div style={styles.overlay}>
@@ -14,9 +19,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 자유 게시판 */}
-      <section style={styles.section}>자유 게시판</section>
-    </div>
+      {/* 올해의 책 */}
+      <YearlyBestBook/>
+
+      {/* 책 추천 */}
+      <BookRecommendation />
+
+      {/* 읽는 책 */}
+      <ReadingBooks/>
+    </Container>
   );
 }
 
@@ -25,7 +36,7 @@ const styles = {
     backgroundImage: 'url("/book_wallpaper.jpg")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    height: '300px',
+    height: '400px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
