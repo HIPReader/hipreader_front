@@ -1,8 +1,6 @@
 import Container from 'react-bootstrap/Container';
 import YearlyBestBook from "../components/YearlyBestBook";
-import BooksToRead from "../components/BooksToRead"
 import ReadingBooks from "../components/ReadingBooks"
-import BooksWishlist from "../components/BooksWishlist";
 import BookRecommendation from "../components/BookRecommendation";
 
 export default function Home() {
