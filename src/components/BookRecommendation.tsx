@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { Form, Button, Card, Row, Col, Spinner, Alert } from 'react-bootstrap';
+import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/swiper-bundle.css';
 
 interface Book {
     id: number;
+    bookId: number;
     title: string;
     author: string;
     categoryName: string;
+    coverImage: string | null;
 }
 
 export default function BookRecommendation() {
     const [age, setAge] = useState<number>(20);
-    const [gender, setGender] = useState<string>('MALE');
-    const [categoryName, setCategoryName] = useState<string>('일반');
+    const [gender, setGender] = useState<string>('FEMALE');
+    const [categoryName, setCategoryName] = useState<string>('인문');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
@@ -65,7 +70,7 @@ export default function BookRecommendation() {
                             <Form.Label>카테고리</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="예) 로맨스, 추리, 판타지"
+                                placeholder="예) 인문, 소설"
                                 value={categoryName}
                                 onChange={(e) => setCategoryName(e.target.value)}
                             />
@@ -94,20 +99,40 @@ export default function BookRecommendation() {
             )}
 
             {/* 추천 결과 */}
-            <Row className="g-4 mt-3">
-                {books.map((book) => (
-                    <Col key={book.id} md={4} lg={3}>
-                        <Card className="h-100 shadow-sm">
-                            <Card.Body>
-                                <Card.Title className="fw-bold">{book.title}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">{book.author}</Card.Subtitle>
-                                <Card.Text>
-                                    카테고리: {book.categoryName}
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
+            <Row className="mt-3">
+                <Swiper
+                    spaceBetween={20} // 카드 간 간격
+                    slidesPerView="auto" // 카드가 가로로 여러 개 보이게
+                    loop={false} // 끝까지 가면 다시 처음으로 돌아옴
+                    breakpoints={{
+                        576: {
+                            slidesPerView: 1, // 모바일에서는 한 개씩
+                        },
+                        768: {
+                            slidesPerView: 2, // 태블릿 이상에서는 2개씩
+                        },
+                        992: {
+                            slidesPerView: 3, // 더 큰 화면에서는 3개씩
+                        },
+                    }}
+                >
+                    {books.map((book) => (
+                        <SwiperSlide key={book.bookId} style={{ width: 'auto', margin: '0 10px' }}>
+                            <Card style={{ width: '18rem' }}>
+                                <Link to={`/books/detail/${book.bookId}`} style={{ color: 'black', textDecoration: 'none' }}>
+                                    <Card.Img variant="top" src={book.coverImage ?? "/book_wallpaper.jpg"} />
+                                    <Card.Body>
+                                        <Card.Title>{book.title}</Card.Title>
+                                        <Card.Text>
+                                            {book.author}<br />
+                                            {book.categoryName}
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Link>
+                            </Card>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </Row>
         </div>
     );
