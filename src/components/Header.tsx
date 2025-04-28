@@ -26,8 +26,7 @@ export default function Header() {
         <div style={styles.left}>
           <Link to="/">
             <img
-              // src={searchOpen ? '/logo.png' : '/logo2.png'}
-                src={'/logo2.png'}
+              src={'/logo2.png'}
               alt="힙한리더 로고"
               style={styles.logo}
             />
