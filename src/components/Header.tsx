@@ -26,41 +26,38 @@ export default function Header() {
         <div style={styles.left}>
           <Link to="/">
             <img
-              src={searchOpen ? '/logo.png' : '/logo2.png'}
+              // src={searchOpen ? '/logo.png' : '/logo2.png'}
+                src={'/logo2.png'}
               alt="힙한리더 로고"
               style={styles.logo}
             />
           </Link>
         </div>
 
-        {/* 가운데: 검색창 */}
-        {searchOpen && (
-          <input
-            type="text"
-            placeholder="제목 검색하기"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={styles.searchInput}
-          />
-        )}
-
         {/* 오른쪽: 검색버튼 + 로그인/마이페이지 + 메뉴버튼 */}
         <div style={styles.right}>
-          <SearchIcon
-            fontSize="medium"
-            style={{ ...styles.iconClickable, ...styles.iconColor }}
-            onClick={() => setSearchOpen((prev) => !prev)}
-          />
+          <div style={styles.searchWrap}>
+            <input
+                type="text"
+                placeholder="제목 검색하기"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                style={styles.searchInput}
+            />
+            <SearchIcon
+                fontSize="medium"
+                style={{ ...styles.iconClickable, ...styles.iconColor }}
+                onClick={() => setSearchOpen((prev) => !prev)}
+            />
+          </div>
           <AccountCircleIcon
             fontSize="medium"
             style={{ ...styles.iconClickable, ...styles.iconColor }}
             onClick={handleProfileClick}
           />
-          {!searchOpen && (
-            <button style={styles.iconButton}>
-              <MenuIcon fontSize="medium" style={styles.iconColor} />
-            </button>
-          )}
+          <button style={styles.iconButton}>
+            <MenuIcon fontSize="medium" style={styles.iconColor} />
+          </button>
         </div>
       </Container>
     </header>
@@ -94,13 +91,21 @@ const styles = {
   logo: {
     height: '40px',
   },
+  searchWrap: {
+    display: 'flex',             // 가로로 배치
+    alignItems: 'center',        // 세로 중앙 정렬
+    backgroundColor: 'white',    // 배경색을 흰색으로
+    border: '1px solid #ccc',    // 테두리 설정
+    borderRadius: '5px',         // 둥근 모서리 설정
+    padding: '3px 10px',
+  },
   searchInput: {
     flexGrow: 1,
     maxWidth: '400px',
-    padding: '8px 12px',
     fontSize: '16px',
     borderRadius: '8px',
-    border: '1px solid #ccc',
+    border: 'none',
+    outline:'none'
   },
   right: {
     display: 'flex',
