@@ -11,101 +11,68 @@ export default function Unified() {
 
     fetch('/api/v1/user_books/my', {
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
     })
-      .then((res) => res.json())
-      .then((data) => {
-        const content = data.content || [];
+    .then((res) => {
+      if (!res.ok) throw new Error('책 데이터를 가져오지 못했습니다.');
+      return res.json();
+    })
+    .then((data) => {
+      const books = data.content || [];
 
-        const reading = content.filter((book: any) => book.status === 'READING');
-        const finished = content.filter((book: any) => book.status === 'FINISHED');
-        const wish = content.filter((book: any) => book.status === 'TO_READ');
-
-        setReadingBooks(reading);
-        setFinishedBooks(finished);
-        setWishBooks(wish);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('책 불러오기 실패:', err);
-        setLoading(false);
-      });
+      // status 기준으로 분리
+      setReadingBooks(books.filter((b: any) => b.status === 'READING'));
+      setFinishedBooks(books.filter((b: any) => b.status === 'FINISHED'));
+      setWishBooks(books.filter((b: any) => b.status === 'TO_READ'));
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error('에러:', err);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) return <div>로딩중...</div>;
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ textAlign: 'center' }}>독서 현황 통합</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '40px' }}>독서 현황 통합</h2>
 
       {/* 다 읽은 책 */}
-      <section style={{ marginBottom: '40px' }}>
-        <h3>다 읽은 책</h3>
-        <hr />
-        {finishedBooks.length === 0 ? (
-          <div>다 읽은 책이 없습니다.</div>
-        ) : (
-          finishedBooks.map((book) => (
-            <div key={book.title}>「{book.title}」 {book.author}</div>
-          ))
-        )}
-      </section>
+      <Section title="다 읽은 책" books={finishedBooks} />
 
       {/* 읽고 있는 책 */}
-      <section style={{ marginBottom: '40px' }}>
-        <h3>읽고 있는 책</h3>
-        <hr />
-        {readingBooks.length === 0 ? (
-          <div>읽고 있는 책이 없습니다.</div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={thStyle}>제목</th>
-                <th style={thStyle}>저자</th>
-                <th style={thStyle}>시작일</th> {/* 시작일은 지금은 없지만 일단 구조만 잡자 */}
-                <th style={thStyle}>%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {readingBooks.map((book) => (
-                <tr key={book.title}>
-                  <td style={tdStyle}>{book.title}</td>
-                  <td style={tdStyle}>{book.author}</td>
-                  <td style={tdStyle}>-</td> {/* 시작일 없는 경우 대시로 표시 */}
-                  <td style={tdStyle}>{book.percentage}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+      <Section title="읽고 있는 책" books={readingBooks} showProgress />
 
       {/* 찜한 책 */}
-      <section style={{ marginBottom: '40px' }}>
-        <h3>읽고 싶은 책</h3>
-        <hr />
-        {wishBooks.length === 0 ? (
-          <div>찜한 책이 없습니다.</div>
-        ) : (
-          wishBooks.map((book) => (
-            <div key={book.title}>「{book.title}」 {book.author}</div>
-          ))
-        )}
-      </section>
+      <Section title="읽고 싶은 책" books={wishBooks} />
     </div>
   );
 }
 
-const thStyle = {
-  border: '1px solid #ccc',
-  padding: '8px',
-  backgroundColor: '#f9f9f9',
-};
-
-const tdStyle = {
-  border: '1px solid #ccc',
-  padding: '8px',
-};
+// 📦 공통 Section 컴포넌트
+function Section({ title, books, showProgress = false }: { title: string; books: any[]; showProgress?: boolean }) {
+  return (
+    <section style={{ marginBottom: '40px' }}>
+      <h3>{title}</h3>
+      <hr />
+      {books.length === 0 ? (
+        <div>표시할 책이 없습니다.</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+          {books.map((book, idx) => (
+            <div key={idx} style={{ border: '1px solid #ccc', padding: '12px', borderRadius: '8px' }}>
+              <div><strong>제목:</strong> {book.title}</div>
+              <div><strong>저자:</strong> {book.author}</div>
+              {showProgress && (
+                <div><strong>진행률:</strong> {book.percentage}%</div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
