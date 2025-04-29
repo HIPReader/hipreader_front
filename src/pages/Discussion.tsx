@@ -7,30 +7,19 @@ import Review from '../components/Review'
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 
-// interface Discussion {
-//     id: number;
-//     bookId: number;
-//     userId: number;
-//     userBookId: number
-//     discussionTopic: string;
-//     clubNo: number;
-//     participants: number;
-//     status: 'ACTIVE' | 'CLOSED' | 'WAITING' | 'CANCELLED';
-//     conditions: string;
-//     scheduledAt: number;
-// }
-
-interface UserDiscussion {
+interface Discussion {
     userDiscussionId: number;
     discussionId: number;
     discussionTopic: string;
-    status: 'APPROVED' | 'WAITING' | 'REJECTED';
+    participants: number;
+    discussionStatus: 'WAITING' | 'ACTIVE' | 'CLOSED' | 'CANCELLED';
+    applicationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
+    scheduledAt: string;
     appliedAt: string;
 }
 
 export default function Discussion() {
-    const [userDiscussion, setUserDiscussion] = useState<UserDiscussion[]>([]);
-    const [discussionIds, setDiscussionIds] = useState<number[]>([]);
+    const [discussions, setDiscussions] = useState<Discussion[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const navigate = useNavigate();
@@ -59,9 +48,8 @@ export default function Discussion() {
                 throw new Error('토론방 정보를 가져오는데 실패했습니다.');
             }
             const data = await response.json();
-            const discussionIds = data.map((item: UserDiscussion) => item.discussionId);
-            console.log(discussionIds);
-            // setDiscussionIds(discussionIds);
+            console.log(data);
+            setDiscussions(data);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -73,27 +61,43 @@ export default function Discussion() {
         <Container>
             <h2 style={styles.title} className="fw-bold pt-5 pb-3 mb-4">토론방</h2>
 
-            {/*<Row>*/}
-            {/*    {userD?.map((discussion) => (*/}
-            {/*        <Col key={discussion.discussionId} md={4} className="mb-4">*/}
-            {/*            <Card style={{ width: '18rem' }}>*/}
-            {/*                <Link to="/books/detail" style={{ color: 'black', textDecoration: 'none' }}>*/}
-            {/*                    <Card.Img variant="top" src="/logo2.png" style={{ objectFit: 'contain' }}/>*/}
-            {/*                    <Card.Body>*/}
-            {/*                        <Card.Title><b>{discussion.discussionTopic}</b></Card.Title>*/}
-            {/*                        <Card.Text>*/}
-            {/*                            <b>clubNo</b> 1<br/>*/}
-            {/*                            <b>참여자 수</b> 5<br/>*/}
-            {/*                            <b>토론방 상태</b> ACTIVE<br/>*/}
-            {/*                            <b>신청 상태</b> APPROVED<br/>*/}
-            {/*                            <b>오픈일</b> 2025-04-29*/}
-            {/*                        </Card.Text>*/}
-            {/*                    </Card.Body>*/}
-            {/*                </Link>*/}
-            {/*            </Card>*/}
-            {/*        </Col>*/}
-            {/*    ))}*/}
-            {/*</Row>*/}
+            <Row>
+                {discussions?.map((discussion) => (
+                    <Col key={discussion.discussionId} md={3} className="mb-4">
+                        <Card style={{ width: '18rem' }}>
+                            {discussion.discussionStatus === 'ACTIVE' && discussion.applicationStatus === 'APPROVED' ? (
+                                <Link to={`/chat?roomId=${discussion.discussionId}`} style={{ color: 'black', textDecoration: 'none' }}>
+                                    <Card.Img variant="top" src="/logo2.png" style={{ objectFit: 'contain' }} />
+                                    <Card.Body>
+                                        <Card.Title><b>{discussion.discussionId} 번 토론방</b></Card.Title>
+                                        <Card.Text>
+                                            <b>주제</b> {discussion.discussionTopic}<br/>
+                                            <b>참여자 수</b> {discussion.participants}<br/>
+                                            <b>토론방 상태</b> {discussion.discussionStatus}<br/>
+                                            <b>신청 상태</b> {discussion.applicationStatus}<br/>
+                                            <b>오픈일</b> {discussion.scheduledAt.split('T')[0]}
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Link>
+                            ) : (
+                                <>
+                                    <Card.Img variant="top" src="/logo2.png" style={{ objectFit: 'contain' }} />
+                                    <Card.Body style={{color:'rgb(167, 182, 194)'}}>
+                                        <Card.Title><b>{discussion.discussionId} 번 토론방</b></Card.Title>
+                                        <Card.Text>
+                                            <b>주제</b> {discussion.discussionTopic}<br/>
+                                            <b>참여자 수</b> {discussion.participants}<br/>
+                                            <b>토론방 상태</b> {discussion.discussionStatus}<br/>
+                                            <b>신청 상태</b> {discussion.applicationStatus}<br/>
+                                            <b>오픈일</b> {discussion.scheduledAt.split('T')[0]}
+                                        </Card.Text>
+                                    </Card.Body>
+                                </>
+                            )}
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
         </Container>
     );
 }
