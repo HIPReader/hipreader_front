@@ -11,7 +11,6 @@ import Container from 'react-bootstrap/Container';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 
 export default function Header() {
-  const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const navigate = useNavigate();
 
@@ -29,6 +28,14 @@ export default function Header() {
       navigate('/login');
     }
   };
+
+  const handleSearch = () => {
+    if (searchText.trim() !== '') {
+      navigate(`/search?query=${encodeURIComponent(searchText)}`);
+    } else {
+      alert('검색어를 입력해주세요.');
+    }
+  }
 
   return (
     <header style={styles.header}>
@@ -57,7 +64,7 @@ export default function Header() {
             <SearchIcon
                 fontSize="medium"
                 style={{ ...styles.iconClickable, ...styles.iconColor }}
-                onClick={() => setSearchOpen((prev) => !prev)}
+                onClick={handleSearch}
             />
           </div>
           <AccountCircleIcon

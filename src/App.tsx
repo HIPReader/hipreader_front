@@ -7,8 +7,9 @@ import Signup from './pages/Signup';
 import BooksDetail from './pages/BooksDetail';
 import Post from './pages/Post';
 import My from './pages/my/My';
+import Search from './pages/Search';
 import Discussion from './pages/Discussion';
-import Chat from './pages/Chat'; // 여기서 불러옴
+import Chat from './pages/Chat';
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/books/detail" element={<BooksDetail />} />
                     <Route path="/posts" element={<Post />} />
                     <Route path="/my/*" element={<My />} />
+                    <Route path="/search" element={<Search />} />
                     <Route path="/discussions" element={<Discussion />} />
                     <Route path="/chat" element={<Chat />} />
                 </Routes>
