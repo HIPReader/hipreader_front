@@ -74,14 +74,6 @@ export default function Header() {
 
             {/* 드롭다운 메뉴 */}
             {isOpen && (
-                // <div style={styles.dropdownMenu}>
-                //   <Nav className="ml-auto" style={{ display:'block' }}>
-                //     <Nav.Link style={styles.navLink} as={Link} to="/">홈</Nav.Link>
-                //     <Nav.Link style={styles.navLink} as={Link} to="/discussions">토론방</Nav.Link>
-                //     <Nav.Link style={styles.navLink} as={Link} to="/posts">게시판</Nav.Link>
-                //     <Nav.Link style={styles.navLink}  as={Link} to="/books/register">책 등록</Nav.Link>
-                //   </Nav>
-                // </div>
                 <div style={styles.dropdownMenu}>
                   <Nav className="ml-auto" style={{ display: 'block' }}>
                     <Nav.Link style={styles.navLink} as={Link} to="/">
