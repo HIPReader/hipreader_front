@@ -11,30 +11,37 @@ interface ChatMessage {
 export default function Chat() {
     const [searchParams] = useSearchParams();
     const roomId = searchParams.get("roomId");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     const [nickname, setNickname] = useState(localStorage.getItem("nickname") || "");
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const socketRef = useRef<WebSocket | null>(null);
-    const chatLogRef = useRef<HTMLDivElement>(null);
-    const chatBoxRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        if (!token) {
+            alert("로그인 하십시오.");
+            window.location.href = "/login";
+            return;
+        }
+
         if (!roomId || !token) {
-            alert("토큰 또는 방 정보가 없습니다!");
+            alert("토론방이 존재하지 않습니다.");
+            window.location.href = "/home";
             return;
         }
 
         const socket = new WebSocket(`ws://localhost:8080/ws/chat?roomId=${roomId}&token=${token}`);
         socketRef.current = socket;
-        console.log("socket readetState: "+socket.readyState);
-        socket.onopen = () => {
-            appendLog(`${roomId} 입장 완료`);
-        };
+
+        socket.onopen = () => {};
 
         socket.onmessage = (event) => {
-            console.log("Received message:", event.data);
-            appendLog(event.data);
+            try {
+                const receivedMessage = JSON.parse(event.data); // JSON 형식으로 처리
+                appendLog(receivedMessage.nickname, receivedMessage.message, receivedMessage.createdAt);
+            } catch (error) {
+                appendLog(nickname, event.data, new Date().toISOString()); // JSON이 아닌 경우
+            }
         };
 
         socket.onclose = (event) => {
@@ -48,11 +55,11 @@ export default function Chat() {
         };
     }, [roomId, token]);
 
-    const appendLog = (text: string) => {
-        if (chatLogRef.current) {
-            chatLogRef.current.innerHTML += `<div>${text}</div>`;
-            chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
-        }
+    const appendLog = (nickname: string, message: string, createdAt: string) => {
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { nickname, message, createdAt }
+        ]);
     };
 
     const sendMessage = () => {
@@ -62,7 +69,8 @@ export default function Chat() {
         }
 
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-            socketRef.current.send(JSON.stringify({ message }));
+            const messageData = { nickname, message };
+            socketRef.current.send(JSON.stringify(messageData));
             setMessage(""); // 메시지 전송 후 입력창 비우기
         } else {
             console.error("WebSocket 연결이 열려 있지 않습니다.");
@@ -101,47 +109,35 @@ export default function Chat() {
                 {roomId}번 토론방
             </h2>
 
-            <div className="mb-3">
-                <label>닉네임: </label>
-                <input
-                    type="text"
-                    value={nickname}
-                    onChange={(e) => {
-                        setNickname(e.target.value);
-                        localStorage.setItem("nickname", e.target.value);
-                    }}
-                    className="form-control mb-2"
-                />
-                <label>메시지: </label>
+            <div className="mb-3 d-flex align-items-center">
+                <label className="me-2" style={{ width: '5%' }}>메시지: </label> {/* 여기에 적당한 마진을 추가하여 레이블과 입력창을 구분 */}
                 <input
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="form-control"
+                    className="form-control me-2 " // 버튼과의 간격을 주기 위해 right margin 추가
+                    style={{ width: '90%' }}
                 />
-                <button onClick={sendMessage} className="btn btn-primary mt-2">보내기</button>
+                <button onClick={sendMessage} className="btn btn-primary" style={{ width: '10%' }}>보내기</button>
             </div>
 
-            <hr />
-
             <div
-                ref={chatBoxRef}
-                style={{ height: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "10px", marginBottom: "20px" }}
+                style={{ height: "500px", overflowY: "auto", border: "1px solid #ccc", padding: "10px", marginBottom: "20px" }}
             >
                 {messages.map((msg, idx) => (
                     <div key={idx} className="message-container">
-                        <span className="nickname fw-bold">{msg.nickname}: </span>
-                        <span className="message">{msg.message}</span>
-                        <span className="timestamp text-muted"> ({formatTime(msg.createdAt)})</span>
+                        {/* 닉네임과 메시지 사이에 ':'를 넣지 않고 바로 출력 */}
+                        <span className="message">{msg.nickname} {msg.message}</span>
+                        <span className="timestamp text-muted" style={styles.timestamp}> {formatTime(msg.createdAt)}</span>
                     </div>
                 ))}
             </div>
-
-            <div
-                id="chat-log"
-                ref={chatLogRef}
-                style={{ border: "1px solid #ccc", height: "300px", overflow: "auto", padding: "10px" }}
-            />
         </Container>
     );
 }
+
+const styles = {
+    timestamp: {
+        float: "right" as "right" | "left" | "none" | "inherit"
+    }
+};
