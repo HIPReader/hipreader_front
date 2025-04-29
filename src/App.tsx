@@ -7,6 +7,7 @@ import Signup from './pages/Signup';
 import BooksDetail from './pages/BooksDetail'
 import Post from './pages/Post'
 import My from './pages/my/My';
+import Discussion from './pages/Discussion';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/books/detail" element={<BooksDetail />} />
                     <Route path="/posts" element={<Post />} />
                     <Route path="/my/*" element={<My />} />
+                    <Route path="/discussions" element={<Discussion />} />
                 </Routes>
             </div>
             <Footer />
