@@ -3,7 +3,6 @@ import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
-import Review from '../components/Review'
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 

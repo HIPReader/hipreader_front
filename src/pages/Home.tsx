@@ -11,8 +11,7 @@ export default function Home() {
         <div style={styles.overlay}>
           <img src="/logo.png" alt="로고" style={styles.bigLogo} />
           <p style={styles.description}>
-            저희 <strong>힙한리더</strong>는 <code>text-hip</code>에서 영감을 받아 만든 애플리케이션으로<br />
-            ~~~한 기능을 지닌 웹입니다
+          기록하고 소통하자 우리가 리드하는 HIP-Reader
           </p>
         </div>
       </div>
