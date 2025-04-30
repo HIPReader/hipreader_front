@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
-import Review from '../components/Review'
+import Review2 from '../components/Review'
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useParams} from "react-router-dom";
@@ -121,7 +121,7 @@ export default function BooksDetail() {
             </div>
 
             {/* 리뷰 */}
-            <Review />
+            {book?.id !== undefined && <Review2 bookId={book.id} />}
         </Container>
     );
 }
