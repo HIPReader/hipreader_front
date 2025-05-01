@@ -11,7 +11,8 @@ export default function Home() {
         <div style={styles.overlay}>
           <img src="/logo.png" alt="로고" style={styles.bigLogo} />
           <p style={styles.description}>
-          기록하고 소통하자 우리가 리드하는 HIP-Reader
+          기록하고 소통하자
+           우리가 리드하는 HIP-Reader
           </p>
         </div>
       </div>
