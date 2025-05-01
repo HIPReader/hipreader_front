@@ -79,7 +79,7 @@ export default function BooksDetail() {
 
             <div className={"mb-5"} style={styles.bookBox}>
                 <div>
-                    <Image src={book.coverImage} style={styles.bookImg} rounded/>
+                    <Image src={book.coverImage || "/book_wallpaper.jpg"} style={styles.bookImg} rounded/>
                 </div>
                 <div>
                     <Card style={styles.bookCard}>

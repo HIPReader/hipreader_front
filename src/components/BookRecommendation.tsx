@@ -118,18 +118,35 @@ export default function BookRecommendation() {
                 >
                     {books.map((book) => (
                         <SwiperSlide key={book.bookId} style={{ width: 'auto', margin: '0 10px' }}>
-                            <Card style={{ width: '18rem' }}>
-                                <Link to={`/books/detail/${book.bookId}`} style={{ color: 'black', textDecoration: 'none' }}>
-                                    <Card.Img variant="top" src={book.coverImage ?? "/book_wallpaper.jpg"} />
-                                    <Card.Body>
-                                        <Card.Title>{book.title}</Card.Title>
+                            <div style={{ width: '10rem' }}>
+                                <Link to={`/books/${book.bookId}`} style={{ color: 'black', textDecoration: 'none' }}>
+                                    <Card.Img style={{width:'180px', height:'260px'}} variant="top" src={book.coverImage ?? "/book_wallpaper.jpg"} />
+                                    <Card.Body className={"mt-2"}>
+                                        <Card.Title
+                                            style={{
+                                                fontWeight: 'bold',
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                            }}
+                                        >
+                                            {book.title}
+                                        </Card.Title>
                                         <Card.Text>
-                                            {book.author}<br />
+                                            <span
+                                                style={{
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                            >
+                                                {book.author}
+                                            </span><br/>
                                             {book.categoryName}
                                         </Card.Text>
                                     </Card.Body>
                                 </Link>
-                            </Card>
+                            </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
