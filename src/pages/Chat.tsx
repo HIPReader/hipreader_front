@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, {useEffect, useRef, useState} from 'react';
+import {useSearchParams} from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 interface ChatMessage {
@@ -33,7 +33,8 @@ export default function Chat() {
         const socket = new WebSocket(`ws://localhost:8080/ws/chat?roomId=${roomId}&token=${token}`);
         socketRef.current = socket;
 
-        socket.onopen = () => {};
+        socket.onopen = () => {
+        };
 
         socket.onmessage = (event) => {
             try {
@@ -58,7 +59,7 @@ export default function Chat() {
     const appendLog = (nickname: string, message: string, createdAt: string) => {
         setMessages((prevMessages) => [
             ...prevMessages,
-            { nickname, message, createdAt }
+            {nickname, message, createdAt}
         ]);
     };
 
@@ -69,7 +70,7 @@ export default function Chat() {
         }
 
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-            const messageData = { nickname, message };
+            const messageData = {nickname, message};
             socketRef.current.send(JSON.stringify(messageData));
             setMessage(""); // 메시지 전송 후 입력창 비우기
         } else {
@@ -105,9 +106,114 @@ export default function Chat() {
 
     return (
         <Container>
-            <h2 className="fw-bold pt-5 pb-3 mb-4" style={{ borderBottom: '1px solid #dbdbdb' }}>
+            <h2 className="fw-bold pt-5 pb-3 mb-4" style={{borderBottom: '1px solid #dbdbdb'}}>
                 {roomId}번 토론방
             </h2>
+
+            <div
+                style={{
+                    height: "500px",
+                    overflowY: "auto",
+                    border: "1px solid #ccc",
+                    padding: "10px",
+                    marginBottom: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px"
+                }}
+            >
+                {messages.map((msg, idx) => {
+                    const isMine = msg.nickname.trim() === nickname.trim();
+                    console.log("isMine:", isMine, msg.nickname, nickname);
+
+                    return (
+                        <div
+                            key={idx}
+                            style={{
+                                display: "flex",
+                                justifyContent: isMine ? "flex-start" : "flex-end"
+                            }}
+                        >
+                            {isMine ? (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "flex-end"
+                                    }}
+                                >
+                                    <div style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
+                                        <img
+                                            src={`profile1.jpeg`}
+                                            alt="profile"
+                                            style={{
+                                                width: "40px",
+                                                height: "40px",
+                                                borderRadius: "50%",
+                                                objectFit: "cover"
+                                            }}
+                                        />
+                                        <div>
+                                            <div style={{ fontSize: "0.85rem", fontWeight: "bold", marginBottom: "4px" }}>
+                                                {msg.nickname}
+                                            </div>
+                                            <div
+                                                style={{
+                                                    backgroundColor: isMine ? "#fff" : "#fff",
+                                                    border: "1px solid #ccc",
+                                                    borderRadius: "15px",
+                                                    padding: "10px 15px",
+                                                    maxWidth: "280px",
+                                                    wordBreak: "break-word"
+                                                }}
+                                            >
+                                                {msg.message}
+                                            </div>
+                                            <div style={{ fontSize: "0.75rem", color: "gray", marginTop: "4px" }}>
+                                                {formatTime(msg.createdAt)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            ) : (
+                                <div style={{display: "flex", flexDirection: "row", gap: "8px"}}>
+                                    <img
+                                        src={`profile2.jpg`}
+                                        alt="profile"
+                                        style={{
+                                            width: "40px",
+                                            height: "40px",
+                                            borderRadius: "50%",
+                                            objectFit: "cover"
+                                        }}
+                                    />
+                                    <div>
+                                        <div style={{fontSize: "0.85rem", fontWeight: "bold", marginBottom: "4px"}}>
+                                            {msg.nickname}
+                                        </div>
+                                        <div
+                                            style={{
+                                                backgroundColor: "#fff",
+                                                border: "1px solid #ccc",
+                                                borderRadius: "15px",
+                                                padding: "10px 15px",
+                                                maxWidth: "280px",
+                                                wordBreak: "break-word"
+                                            }}
+                                        >
+                                            {msg.message} ㄹㄹㄹ
+                                        </div>
+                                        <div style={{fontSize: "0.75rem", color: "gray", marginTop: "4px"}}>
+                                            {formatTime(msg.createdAt)}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
 
             <div className="mb-3 d-flex align-items-center">
                 <label className="me-2" style={{ width: '5%' }}>메시지: </label> {/* 여기에 적당한 마진을 추가하여 레이블과 입력창을 구분 */}
@@ -118,19 +224,7 @@ export default function Chat() {
                     className="form-control me-2 " // 버튼과의 간격을 주기 위해 right margin 추가
                     style={{ width: '90%' }}
                 />
-                <button onClick={sendMessage} className="btn btn-primary" style={{ width: '10%' }}>보내기</button>
-            </div>
-
-            <div
-                style={{ height: "500px", overflowY: "auto", border: "1px solid #ccc", padding: "10px", marginBottom: "20px" }}
-            >
-                {messages.map((msg, idx) => (
-                    <div key={idx} className="message-container">
-                        {/* 닉네임과 메시지 사이에 ':'를 넣지 않고 바로 출력 */}
-                        <span className="message">{msg.nickname} {msg.message}</span>
-                        <span className="timestamp text-muted" style={styles.timestamp}> {formatTime(msg.createdAt)}</span>
-                    </div>
-                ))}
+                <button onClick={sendMessage} className="btn btn-dark" style={{ width: '10%' }}>보내기</button>
             </div>
         </Container>
     );
