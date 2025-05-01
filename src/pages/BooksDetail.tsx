@@ -49,7 +49,7 @@ export default function BooksDetail() {
         </div>
       </div>
 
-      <Review />
+      {/*<Review />*/}
     </Container>
   );
 }
