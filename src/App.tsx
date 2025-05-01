@@ -10,6 +10,7 @@ import My from './pages/my/My';
 import Search from './pages/Search';
 import Discussion from './pages/Discussion';
 import Chat from './pages/Chat';
+import Register from './pages/Register'
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/search" element={<Search />} />
                     <Route path="/discussions" element={<Discussion />} />
                     <Route path="/chat" element={<Chat />} />
+                    <Route path="/books/register" element={<Register />} />
                 </Routes>
             </div>
             <Footer />

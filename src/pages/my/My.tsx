@@ -9,6 +9,7 @@ import Discussion from './Discussion';
 import Statistics from './Statistics';
 import WishList from './WishList';
 
+
 export default function My() {
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
