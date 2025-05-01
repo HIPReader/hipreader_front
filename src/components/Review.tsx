@@ -7,7 +7,7 @@ interface ReadReviewResponseDto {
     rating: number;
     userId: number;
     bookId: number;
-    createdAt: string;
+    updatedAt: string;
 }
 
 interface CreateReviewRequestDto {
@@ -206,7 +206,7 @@ const ReviewSection: React.FC<Props> = ({bookId}) => {
                                 <Col xs={11}>
                                     <strong>{nickname}</strong>
                                     <div className="text-muted" style={{fontSize: "0.85rem"}}>
-                                        {formatTime(review.createdAt)}
+                                        {formatTime(review.updatedAt)}
                                     </div>
 
                                     {editModeId === review.id ? (
