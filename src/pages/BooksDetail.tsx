@@ -5,6 +5,7 @@ import Image from 'react-bootstrap/Image';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Review from '../components/Review';
 
 interface BookDetail {
     id: number;
@@ -147,6 +148,8 @@ export default function BooksDetail() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            <Review bookId={book.id} />
         </Container>
     );
 }
