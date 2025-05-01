@@ -8,9 +8,9 @@ import BooksDetail from './pages/BooksDetail';
 import Post from './pages/Post';
 import My from './pages/my/My';
 import Search from './pages/Search';
-import Discussion from './pages/Discussion';
 import Chat from './pages/Chat';
-import Register from './pages/Register'
+import Register from './pages/Register';
+import Discussion from './pages/Discussion';
 
 function App() {
     return (
@@ -25,9 +25,9 @@ function App() {
                     <Route path="/posts" element={<Post />} />
                     <Route path="/my/*" element={<My />} />
                     <Route path="/search" element={<Search />} />
-                    <Route path="/discussions" element={<Discussion />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/books/register" element={<Register />} />
+                    <Route path="/discussions" element={<Discussion />} />
                 </Routes>
             </div>
             <Footer />

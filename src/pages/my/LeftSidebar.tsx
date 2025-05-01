@@ -8,7 +8,8 @@ export default function LeftSidebar() {
     { path: 'reading', label: '읽고 있는 책' },
     { path: 'wishlist', label: '위시 리스트' },
     { path: 'statistics', label: '나의 독서 통계' },
-    { path: 'discussion', label: '나의 토론방' },
+    { path: 'discussion/created', label: '내가 만든 토론방' },
+    { path: 'discussion/applied', label: '내가 신청한 토론방' },
   ];
 
   return (
