@@ -1,123 +1,148 @@
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
-import Image from 'react-bootstrap/Image';
-import Row from 'react-bootstrap/Row';
-import Card from 'react-bootstrap/Card';
+import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import Button from 'react-bootstrap/Button';
 
-interface Discussion {
-    userDiscussionId: number;
-    discussionId: number;
-    discussionTopic: string;
+export interface Discussion {
+    id: number;
+    topic: string;
     participants: number;
-    discussionStatus: 'WAITING' | 'ACTIVE' | 'CLOSED' | 'CANCELLED';
-    applicationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
     scheduledAt: string;
-    appliedAt: string;
+    status: string;
+    hostNickname: string;
+    bookTitle: string;
+    mode: string;
 }
 
-export default function Discussion() {
+export interface PageResponse<T> {
+    content: T[];
+    totalPages: number;
+    number: number; // 현재 페이지 (0부터 시작)
+}
+
+const DiscussionList: React.FC = () => {
+    const token = localStorage.getItem("accessToken");
     const [discussions, setDiscussions] = useState<Discussion[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
+    const [page, setPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(0);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
-            alert('로그인이 필요합니다.');
-            navigate('/login');
-            return;
-        }
-        handleDiscussion(accessToken);
-    }, [])
-
-    const handleDiscussion = async (accessToken: string) => {
-        setLoading(true);
+    const fetchDiscussions = async (pageNum: number) => {
         try {
-            const response = await fetch(`/api/v1/userDiscussions/by-user`, {
-                method: 'GET',
+            const response = await fetch(`/api/v1/discussions?page=${pageNum}&size=10`, {
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                },
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
+            if (!response.ok) throw new Error('Failed to fetch discussions');
+            const data: PageResponse<Discussion> = await response.json();
+            setDiscussions(data.content);
+            setTotalPages(data.totalPages);
+            setPage(data.number + 1); // 0-based → 1-based
+        } catch (error) {
+            console.error(error);
+            alert('토론방 목록을 불러오지 못했습니다.');
+        }
+    };
+
+    useEffect(() => {
+        fetchDiscussions(1);
+    }, []);
+
+    const handlePageClick = (newPage: number) => {
+        fetchDiscussions(newPage);
+    };
+
+    const handleEnterBtn = (discussionId: number) => {
+        navigate(`/chat?roomId=${discussionId}`);
+    };
+
+    const handleApplyBtn = async (discussionId: number) => {
+        try {
+            const response = await fetch(`/api/v1/userDiscussions/apply`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ discussionId }),
+            });
+
             if (!response.ok) {
-                throw new Error('토론방 정보를 가져오는데 실패했습니다.');
+                const errorData = await response.json();
+                alert(errorData.message || '토론방 신청을 실패했습니다.');
+                return;
             }
-            const data = await response.json();
-            console.log(data);
-            setDiscussions(data);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+
+            alert(`${discussionId}번 토론방 신청되었습니다.`);
+        } catch (error) {
+            console.error(error);
+            alert('토론방 신청 중 오류가 발생했습니다.');
         }
     };
 
     return (
-        <Container>
-            <h2 style={styles.title} className="fw-bold pt-5 pb-3 mb-4">토론방</h2>
+        <div className="container mt-4">
+            <h2 style={{borderBottom: '1px solid #dbdbdb'}} className="fw-bold pt-5 pb-3 mb-4">토론방 목록</h2>
 
-            <Row>
-                {discussions?.map((discussion) => (
-                    <Col key={discussion.discussionId} md={3} className="mb-4">
-                        <Card style={{ width: '18rem' }}>
-                            {discussion.discussionStatus === 'ACTIVE' && discussion.applicationStatus === 'APPROVED' ? (
-                                <Link to={`/chat?roomId=${discussion.discussionId}`} style={{ color: 'black', textDecoration: 'none' }}>
-                                    <Card.Img variant="top" src="/logo2.png" style={{ objectFit: 'contain' }} />
-                                    <Card.Body>
-                                        <Card.Title><b>{discussion.discussionId} 번 토론방</b></Card.Title>
-                                        <Card.Text>
-                                            <b>주제</b> {discussion.discussionTopic}<br/>
-                                            <b>참여자 수</b> {discussion.participants}<br/>
-                                            <b>토론방 상태</b> {discussion.discussionStatus}<br/>
-                                            <b>신청 상태</b> {discussion.applicationStatus}<br/>
-                                            <b>오픈일</b> {discussion.scheduledAt.split('T')[0]}
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Link>
-                            ) : (
-                                <>
-                                    <Card.Img variant="top" src="/logo2.png" style={{ objectFit: 'contain' }} />
-                                    <Card.Body style={{color:'rgb(167, 182, 194)'}}>
-                                        <Card.Title><b>{discussion.discussionId} 번 토론방</b></Card.Title>
-                                        <Card.Text>
-                                            <b>주제</b> {discussion.discussionTopic}<br/>
-                                            <b>참여자 수</b> {discussion.participants}<br/>
-                                            <b>토론방 상태</b> {discussion.discussionStatus}<br/>
-                                            <b>신청 상태</b> {discussion.applicationStatus}<br/>
-                                            <b>오픈일</b> {discussion.scheduledAt.split('T')[0]}
-                                        </Card.Text>
-                                    </Card.Body>
-                                </>
-                            )}
-                        </Card>
-                    </Col>
+            <table className="table table-hover mt-3">
+                <thead className="table-light">
+                <tr>
+                    <th>책</th>
+                    <th>주제</th>
+                    <th>참여자</th>
+                    <th>예정일</th>
+                    <th>호스트</th>
+                    <th>토론 방식</th>
+                    <th>상태</th>
+                    <th>신청 / 입장</th>
+                </tr>
+                </thead>
+                <tbody>
+                {discussions.map(d => (
+                    <tr key={d.id}>
+                        <td>{d.bookTitle}</td>
+                        <td>{d.topic}</td>
+                        <td>{d.participants}</td>
+                        <td>{new Date(d.scheduledAt).toLocaleString()}</td>
+                        <td>{d.hostNickname}</td>
+                        <td>{d.mode == 'AUTO_APPROVAL' ? '선착순' : '승인 방식'}</td>
+                        <td>{d.status}</td>
+                        <td>
+                            {d.mode === 'AUTO_APPROVAL' && d.status === 'ACTIVE' ? (
+                                <Button
+                                    className="btn btn-sm btn-light btn-outline-dark"
+                                    onClick={() => handleEnterBtn(d.id)}
+                                >
+                                    입장
+                                </Button>
+                            ) : d.mode === 'MANUAL_APPROVAL' && d.status === 'WAITING' ? (
+                                <Button
+                                    className="btn btn-sm btn-light btn-outline-dark"
+                                    onClick={() => handleApplyBtn(d.id)}
+                                >
+                                    신청
+                                </Button>
+                            ) : null}
+                        </td>
+                    </tr>
                 ))}
-            </Row>
-        </Container>
+                </tbody>
+            </table>
+
+            <nav className="d-flex justify-content-center">
+                <ul className="pagination">
+                    {Array.from({length: totalPages}, (_, i) => i + 1).map(p => (
+                        <li key={p} className={`page-item ${p === page ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageClick(p)}>
+                                {p}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        </div>
     );
-}
+};
 
-const styles = {
-    title: {
-        borderBottom: '1px solid #dbdbdb'
-    },
-    bookImg: {
-        width: '205px',
-        height: '295px',
-        objectFit: 'cover' as 'cover' | 'contain' | 'fill'
-    },
-    bookCard: {
-        border: 'none'
-    },
-    bookBox: {
-        display: 'flex',
-        alignItems: 'center',
-        alignContent: 'stretch',
-        gap:'15px'
-    },
-
-}
+export default DiscussionList;
