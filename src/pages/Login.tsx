@@ -65,9 +65,15 @@ export default function Login() {
                 <button type="submit" style={styles.button}>
                     SIGN IN
                 </button>
-                <Link to="/signup" style={styles.signupLink}>
-                    회원가입
-                </Link>
+                
+                <div style={styles.linkContainer}>
+                    <Link to="/forgot-password" style={styles.linkLeft}>
+                        비밀번호 찾기
+                    </Link>
+                    <Link to="/signup" style={styles.linkRight}>
+                        회원가입
+                    </Link>
+                </div>
             </form>
         </div>
     );
@@ -87,7 +93,7 @@ const styles = {
         textAlign: 'center' as const,
     },
     input: {
-        width: '90%',
+        width: '95%',
         padding: '12px',
         marginBottom: '12px',
         border: '1px solid black',
@@ -109,4 +115,21 @@ const styles = {
         color: 'black',
         textDecoration: 'underline',
     },
+    linkContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginTop: '12px',
+        padding: '0 8px',
+        fontSize: '14px',
+      },
+      
+      linkLeft: {
+        textDecoration: 'underline',
+        color: 'black',
+      },
+      
+      linkRight: {
+        textDecoration: 'underline',
+        color: 'black',
+      },
 };
